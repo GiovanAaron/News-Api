@@ -1,9 +1,7 @@
-# Northcoders News API
+In order to run these tests, create two files in the current folder with the following contents:
 
-For instructions, please head over to [L2C NC News](https://l2c.northcoders.com/courses/be/nc-news).
+.env.test
+PGDATABASE=nc_news_test
 
-
-
---- 
-
-This portfolio project was created as part of a Digital Skills Bootcamp in Software Engineering provided by [Northcoders](https://northcoders.com/)
+.env.dev
+PGDATABASE=nc_news
