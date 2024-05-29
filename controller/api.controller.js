@@ -8,5 +8,9 @@ exports.getAllTopics = (req, res) => {
 };
 
 exports.getAllEndpoints = (req, res) => {
-  res.status(200).send(this.allEndPoints);
+  res.status(200).send(this.allEndPoints)
+  .catch((error) => {
+    console.error("error in getAllEndpoints", error)
+    res.status(500).send({error: 'internal server error' })
+  });
 };

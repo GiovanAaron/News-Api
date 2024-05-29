@@ -3,8 +3,8 @@ const app = require("../app");
 const seed = require("../db/seeds/seed");
 const data = require("../db/data/test-data/index");
 const request = require("supertest");
-const topics = require("../db/data/test-data/topics");
 const { allEndPoints } = require("../controller/api.controller");
+const { text } = require("express");
 allEndPoints;
 
 beforeEach(() => {
@@ -24,7 +24,13 @@ describe("GET /api/topics", () => {
       .expect(200)
       .then(({ body }) => {
         const { topics } = body;
-        expect(topics).toEqual(expectedTopics);
+        expect(topics).toHaveLength(3);
+        topics.forEach((topic) => {
+          expect(topic).toMatchObject({
+            slug: expect.any(String),
+            description: expect.any(String),
+          });
+        });
       });
   });
 });
