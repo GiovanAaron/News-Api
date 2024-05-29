@@ -14,11 +14,7 @@ afterAll(() => db.end());
 
 describe("GET /api/topics", () => {
   it("Gets all topics", () => {
-    const expectedTopics = [
-      { slug: "mitch", description: "The man, the Mitch, the legend" },
-      { slug: "cats", description: "Not dogs" },
-      { slug: "paper", description: "what books are made of" },
-    ];
+    
     return request(app)
       .get("/api/topics")
       .expect(200)
