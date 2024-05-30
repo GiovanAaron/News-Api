@@ -1,4 +1,7 @@
-const { fetchArticlesById } = require("../models/articles.models");
+const {
+  fetchArticlesById,
+  fetchArticles,
+} = require("../models/articles.models");
 const { fetchAllTopics } = require("../models/topics.models");
 exports.allEndPoints = require("../endpoints.json");
 
@@ -30,4 +33,10 @@ exports.getArticleByID = (req, res) => {
         res.status(400).send({ error: "article not found" });
       }
     });
+};
+
+exports.getArticles = (req, res) => {
+  fetchArticles().then((article) => {
+    res.status(200).send({ article });
+  });
 };
