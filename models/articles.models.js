@@ -16,3 +16,29 @@ exports.fetchArticlesById = (articleID) => {
       throw err;
     });
 };
+
+exports.fetchArticles = () => {
+  return db
+    .query(
+      `SELECT 
+      Articles.author, 
+      Articles.title, 
+      Articles.article_id, 
+      Articles.topic, 
+      Articles.created_at, 
+      Articles.votes, 
+      Articles.article_img_url,
+      COUNT(Comments.comment_id) AS comment_count
+  FROM 
+      Articles
+  LEFT JOIN 
+      Comments ON Articles.article_id = Comments.article_id
+  GROUP BY 
+      Articles.article_id 
+  ORDER BY 
+      Articles.created_at DESC;
+  
+`
+    )
+    .then(({ rows }) => rows);
+};
