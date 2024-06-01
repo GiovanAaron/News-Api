@@ -6,13 +6,12 @@ exports.fetchArticlesById = (articleID) => {
   return db
     .query("select * from articles where article_id = $1;", [article_id])
     .then(({ rows }) => {
-      if (rows.length === 0) {
-        throw new Error(`Article with ID ${article_id} not found`);
+      if (!rows.length) {
+        return Promise.reject({ status: 404, msg: "Not Found" });
       }
       return rows[0];
     })
     .catch((err) => {
-      console.log("you have an error", err);
       throw err;
     });
 };
@@ -41,4 +40,38 @@ exports.fetchArticles = () => {
 `
     )
     .then(({ rows }) => rows);
+};
+
+exports.updateVotes = (articleID, patchVotes, sendKey) => {
+  if (sendKey !== '["inc_votes"]')
+    return Promise.reject({
+      status: 400,
+      msg: "Bad Request: Invalid Update Format",
+    });
+
+  if (isNaN(patchVotes))
+    return Promise.reject({
+      status: 400,
+      msg: "Bad Request: Invalid Vote Value",
+    });
+
+  return db
+    .query(`Select * from articles where article_id = $1`, [articleID])
+    .then(({ rows }) => {
+      if (rows.length) {
+        return db
+          .query(
+            `UPDATE articles
+          SET votes = votes + $1
+          WHERE article_id = $2
+          RETURNING *`,
+            [patchVotes, articleID]
+          )
+          .then(({ rows }) => {
+            return rows;
+          });
+      } else {
+        return Promise.reject({ status: 404, msg: "Not Found" });
+      }
+    });
 };
