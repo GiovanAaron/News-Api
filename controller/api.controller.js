@@ -2,12 +2,16 @@ const {
   fetchArticlesById,
   fetchArticles,
   updateVotes,
+  getFilteredArticles,
 } = require("../models/articles.models");
 const {
   fetchAllComments,
   submitComment,
+  removeComment,
+  countComments,
 } = require("../models/comments.models");
 const { fetchAllTopics } = require("../models/topics.models");
+const { fetchUsers } = require("../models/users.models");
 
 exports.allEndPoints = require("../endpoints.json");
 
@@ -29,19 +33,35 @@ exports.getAllEndpoints = (req, res) => {
 exports.getArticleByID = (req, res, next) => {
   const articleID = req.params;
 
-  fetchArticlesById(articleID)
-    .then((article) => {
-      res.status(200).send({ article });
-    })
-    .catch((error) => {
-      next(error);
+  const path = req.path;
+  const urlEnd = path.substring(path.lastIndexOf("/") + 1);
+
+  if (urlEnd === "comment_count") {
+    countComments(articleID).then(({ count }) => {
+      count = parseInt(count);
+      res.status(200).send({ count });
     });
+  } else {
+    fetchArticlesById(articleID)
+      .then((article) => {
+        res.status(200).send({ article });
+      })
+      .catch((error) => {
+        next(error);
+      });
+  }
 };
 
 exports.getArticles = (req, res) => {
-  fetchArticles().then((article) => {
-    res.status(200).send({ article });
-  });
+  if (Object.keys(req.query).length) {
+    getFilteredArticles(req.query).then((articles) => {
+      res.status(200).send({ articles });
+    });
+  } else {
+    fetchArticles().then((article) => {
+      res.status(200).send({ article });
+    });
+  }
 };
 
 exports.getCommentsFromArticle = (req, res, next) => {
@@ -61,7 +81,7 @@ exports.postComment = (req, res, next) => {
 
   submitComment(body)
     .then((comment) => {
-      console.log("return comment from the models -->", comment);
+      //console.log("return comment from the models -->", comment);
       res.status(200).send(body);
     })
     .catch((error) => {
@@ -84,4 +104,20 @@ exports.patchVotes = (req, res, next) => {
     .catch((error) => {
       next(error);
     });
+};
+
+exports.deleteComment = (req, res, next) => {
+  const { comment_id } = req.params;
+
+  removeComment(comment_id)
+    .then((queryResult) => {
+      res.status(204).send();
+    })
+    .catch((error) => {
+      next(error);
+    });
+};
+
+exports.getUsers = (req, res) => {
+  fetchUsers().then((users) => res.status(200).send({ users }));
 };

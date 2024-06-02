@@ -75,3 +75,27 @@ exports.updateVotes = (articleID, patchVotes, sendKey) => {
       }
     });
 };
+
+exports.getFilteredArticles = (query) => {
+  
+  const filterField = Object.keys(query)[0];
+  const filterCriteria = query[filterField];
+
+  if(!filterCriteria){
+    return db.query(`SELECT * FROM Articles`)
+    .then(({rows}) => {
+      return rows
+    })
+  }
+
+  return db
+    .query(
+      `SELECT * FROM Articles Where ${filterField} = $1
+          `,
+      [filterCriteria]
+    )
+    .then(({ rows }) => {
+      return rows;
+    });
+};
+

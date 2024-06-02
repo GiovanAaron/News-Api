@@ -42,7 +42,7 @@ describe("Get /api", () => {
   });
 });
 
-describe("GET /api/articles/:article_id", () => {
+describe.only("GET /api/articles/:article_id", () => {
   test(`Responds with:
 
   an article object, which should have the following properties:
@@ -330,4 +330,172 @@ describe("PATCH /api/articles/:article_id (Upvote)", () => {
         });
     });
   });
+});
+
+describe("CORE: DELETE comments", () => {
+  describe("DELETE /api/comments/:comment_id", () => {
+    test("should respond with status 204 and no content. ", () => {
+      return request(app)
+        .delete("/api/comments/2")
+        .expect(204)
+        .then((response) => {
+          expect(response.statusMessage).toBe(undefined);
+        });
+    });
+  });
+  describe("non existing requested resource - DELETE /api/comments/:comments", () => {
+    test("should return status 404 not found", () => {
+      return request(app)
+        .delete("/api/comments/22")
+        .expect(404)
+        .then(({ text }) => {
+          const message = JSON.parse(text);
+          expect(message.msg).toBe("Not Found");
+        });
+    });
+  });
+  describe("Invalid request DELETE /api/comments/:comment_id", () => {
+    test("should return 400 bad request ", () => {
+      return request(app)
+        .delete("/api/comments/sdsa")
+        .expect(400)
+        .then(({ text }) => {
+          const message = JSON.parse(text);
+          expect(message.msg).toBe("Bad Request");
+        });
+    });
+  });
+});
+
+describe("CORE: GET /api/users", () => {
+  describe("Get /api/users", () => {
+    test("should get all users", () => {
+      return request(app)
+        .get("/api/users")
+        .expect(200)
+        .then(({ body }) => {
+          const { users } = body;
+
+          expect(users).toHaveLength(4);
+          users.forEach((topic) => {
+            expect(topic).toMatchObject({
+              username: expect.any(String),
+              name: expect.any(String),
+              avatar_url: expect.any(String),
+            });
+          });
+        });
+    });
+  });
+});
+
+describe("Query API Articles", () => {
+  describe("CORE: GET /api/articles (topic query)", () => {
+    test("should provide article by topic", () => {
+      return request(app)
+        .get("/api/articles/?topic=mitch")
+        .expect(200)
+        .then(({ body }) => {
+          const { articles } = body;
+          expect(articles).toHaveLength(12)
+          articles.forEach((article) => {
+            expect(article).toMatchObject({
+              title: expect.any(String),
+              topic: expect.any(String),
+              author: expect.any(String),
+              body: expect.any(String),
+              created_at: expect.any(String),
+              votes: expect.any(Number),
+              article_img_url: expect.any(String),
+            });
+          });
+        });
+    });
+  });
+  describe("CORE: GET /api/articles (topic query)", () => {
+    test("should provide article by topic", () => {
+      return request(app)
+        .get("/api/articles/?topic=cats")
+        .expect(200)
+        .then(({ body }) => {
+          const { articles } = body;
+          expect(articles).toHaveLength(1)
+          articles.forEach((article) => {
+            expect(article).toMatchObject({
+              title: expect.any(String),
+              topic: expect.any(String),
+              author: expect.any(String),
+              body: expect.any(String),
+              created_at: expect.any(String),
+              votes: expect.any(Number),
+              article_img_url: expect.any(String),
+            });
+          });
+        });
+    });
+  });
+
+  describe("Return all if query is omitted", () => {
+    test("should provide article by topic", () => {
+      return request(app)
+        .get("/api/articles/?topic=")
+        .expect(200)
+        .then(({ body }) => {
+          const { articles } = body;
+          expect(articles).toHaveLength(13)
+          articles.forEach((article) => {
+            expect(article).toMatchObject({
+              title: expect.any(String),
+              topic: expect.any(String),
+              author: expect.any(String),
+              body: expect.any(String),
+              created_at: expect.any(String),
+              votes: expect.any(Number),
+              article_img_url: expect.any(String),
+            });
+          });
+        });
+    });
+  });
+  describe("Return nothing is there are no items with the criteria", () => {
+    test("should provide zero articles", () => {
+      return request(app)
+        .get("/api/articles/?topic=cars")
+        .expect(200)
+        .then(({ body }) => {
+          const { articles } = body;
+          expect(articles).toHaveLength(0)
+          
+        });
+    });
+  });
+
+});
+
+describe.only('CORE: GET /api/articles/:article_id (comment_count)', () => {
+
+  describe('Get comment', () => {
+    test('should ', () => {
+      return request(app)
+      .get("/api/articles/3/comment_count")
+      .expect(200)
+      .then(({body}) => {
+        expect(body.count).toBe(2)
+      })
+
+      
+    });
+  });
+  // describe('Get comment', () => {
+  //   test('should ', () => {
+  //     return request(app)
+  //     .get("/api/articles/35/comment_count")
+  //     .expect(200)
+  //     .then(({body}) => {
+  //       expect(body.count).toBe(2)
+  //     })
+
+      
+  //   });
+  // });
 });
