@@ -9,7 +9,6 @@
     "seed-prod": "NODE_ENV=production npm run seed",
     "seed": "node ./db/seeds/run-seed.js",
     "test": "PGDATABASE=nc_news_test jest endpoints.test.js",
-    "prepare": "husky install",
     "dev": "nodemon listen.js"
   },
   "repository": {
@@ -24,7 +23,6 @@
   },
   "homepage": "https://github.com/northcoders/be-nc-news#readme",
   "devDependencies": {
-    "husky": "^8.0.2",
     "jest": "^27.5.1",
     "jest-extended": "^2.0.0",
     "jest-sorted": "^1.0.15",
