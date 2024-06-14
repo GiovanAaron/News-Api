@@ -88,8 +88,15 @@ exports.postComment = (req, res, next) => {
 
       switch (error.code) {
         case "23502":
+        case "22P02":
+        case "23503":
           psqlError.status = 400;
           psqlError.msg = "Bad Request";
+
+          break;
+        default:
+          psqlError.status = 400;
+          psqlError.msg = "Default Bad Request";
       }
 
       next(psqlError);

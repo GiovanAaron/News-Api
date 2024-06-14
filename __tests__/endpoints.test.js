@@ -222,7 +222,7 @@ describe("CORE: POST /api/articles/:article_id/comments", () => {
     test(`should return bad request`, () => {
       const message = {
         articleID: 3,
-        
+
         body: "My backend hurts",
       };
       return request(app)
@@ -238,6 +238,38 @@ describe("CORE: POST /api/articles/:article_id/comments", () => {
     test(`should return bad request`, () => {
       const message = {
         username: "Callback_Prisoner",
+      };
+      return request(app)
+        .post("/api/articles/3/comments")
+        .send(message)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Bad Request");
+        });
+    });
+  });
+  describe("POST /api/articles/:article_id/comments (correct keys but invalid data type)", () => {
+    test(`should return bad request`, () => {
+      const message = {
+        articleID: "abc",
+        username: "icellusedkars",
+        body: "this comment should havea an invalid character for article ID, ",
+      };
+      return request(app)
+        .post("/api/articles/3/comments")
+        .send(message)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Bad Request");
+        });
+    });
+  });
+  describe("POST /api/articles/:article_id/comments (foreign key violaiton '50' doesn't exist in the ref chart)", () => {
+    test(`should return bad request`, () => {
+      const message = {
+        articleID: 50,
+        username: "icellusedkars",
+        body: "this comment should havea an invalid character for article ID, ",
       };
       return request(app)
         .post("/api/articles/3/comments")
@@ -400,7 +432,7 @@ describe("Query API Articles", () => {
         .expect(200)
         .then(({ body }) => {
           const { articles } = body;
-          expect(articles).toHaveLength(12)
+          expect(articles).toHaveLength(12);
           articles.forEach((article) => {
             expect(article).toMatchObject({
               title: expect.any(String),
@@ -422,7 +454,7 @@ describe("Query API Articles", () => {
         .expect(200)
         .then(({ body }) => {
           const { articles } = body;
-          expect(articles).toHaveLength(1)
+          expect(articles).toHaveLength(1);
           articles.forEach((article) => {
             expect(article).toMatchObject({
               title: expect.any(String),
@@ -445,7 +477,7 @@ describe("Query API Articles", () => {
         .expect(200)
         .then(({ body }) => {
           const { articles } = body;
-          expect(articles).toHaveLength(13)
+          expect(articles).toHaveLength(13);
           articles.forEach((article) => {
             expect(article).toMatchObject({
               title: expect.any(String),
@@ -467,26 +499,21 @@ describe("Query API Articles", () => {
         .expect(200)
         .then(({ body }) => {
           const { articles } = body;
-          expect(articles).toHaveLength(0)
-          
+          expect(articles).toHaveLength(0);
         });
     });
   });
-
 });
 
-describe('CORE: GET /api/articles/:article_id (comment_count)', () => {
-
-  describe('Get comment', () => {
-    test('should ', () => {
+describe("CORE: GET /api/articles/:article_id (comment_count)", () => {
+  describe("Get comment", () => {
+    test("should ", () => {
       return request(app)
-      .get("/api/articles/3/comment_count")
-      .expect(200)
-      .then(({body}) => {
-        expect(body.count).toBe(2)
-      })
-
-      
+        .get("/api/articles/3/comment_count")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.count).toBe(2);
+        });
     });
   });
   // describe('Get comment', () => {
@@ -498,7 +525,6 @@ describe('CORE: GET /api/articles/:article_id (comment_count)', () => {
   //       expect(body.count).toBe(2)
   //     })
 
-      
   //   });
   // });
 });
