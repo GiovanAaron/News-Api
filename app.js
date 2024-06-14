@@ -19,9 +19,8 @@ app.get("/api/topics", getAllTopics);
 app.get("/api/articles/:article_id", getArticleByID);
 app.get("/api/articles", getArticles);
 app.get("/api/articles/:article_id/comments", getCommentsFromArticle);
-app.get("/api/users", getUsers)
-app.get("/api/articles/:article_id/comment_count", getArticleByID)
-
+app.get("/api/users", getUsers);
+app.get("/api/articles/:article_id/comment_count", getArticleByID);
 
 app.use(express.json());
 

@@ -81,11 +81,18 @@ exports.postComment = (req, res, next) => {
 
   submitComment(body)
     .then((comment) => {
-      //console.log("return comment from the models -->", comment);
       res.status(200).send(body);
     })
     .catch((error) => {
-      next(error);
+      const psqlError = {};
+
+      switch (error.code) {
+        case "23502":
+          psqlError.status = 400;
+          psqlError.msg = "Bad Request";
+      }
+
+      next(psqlError);
     });
 };
 

@@ -42,7 +42,7 @@ describe("Get /api", () => {
   });
 });
 
-describe.only("GET /api/articles/:article_id", () => {
+describe("GET /api/articles/:article_id", () => {
   test(`Responds with:
 
   an article object, which should have the following properties:
@@ -201,7 +201,8 @@ describe("CORE: POST /api/articles/:article_id/comments", () => {
   
   the posted comment.`, () => {
     const message = {
-      username: "NC_Victim",
+      articleID: 2,
+      username: "icellusedkars",
       body: "My backend hurts",
     };
     return request(app)
@@ -220,6 +221,8 @@ describe("CORE: POST /api/articles/:article_id/comments", () => {
   describe("POST /api/articles/:article_id/comments (message without a username)", () => {
     test(`should return bad request`, () => {
       const message = {
+        articleID: 3,
+        
         body: "My backend hurts",
       };
       return request(app)
@@ -472,7 +475,7 @@ describe("Query API Articles", () => {
 
 });
 
-describe.only('CORE: GET /api/articles/:article_id (comment_count)', () => {
+describe('CORE: GET /api/articles/:article_id (comment_count)', () => {
 
   describe('Get comment', () => {
     test('should ', () => {

@@ -20,14 +20,19 @@ exports.fetchAllComments = (articleID) => {
 };
 
 exports.submitComment = (comment) => {
-  // console.log(comment)
-  // console.log(comment.username)
-  // console.log(comment.body)
-  if (comment.username && comment.body) {
-    return Promise.resolve(comment);
-  } else {
-    return Promise.reject({ status: 400, msg: "Bad Request" });
-  }
+  return db
+    .query(
+      `INSERT INTO comments
+  (article_id, author, body)
+  VALUES ($1, $2, $3)`,
+      [comment.articleID, comment.username, comment.body]
+    )
+    .then((result) => {
+      return result.rows[0];
+    })
+    .catch((err) => {
+      throw err;
+    });
 };
 
 exports.removeComment = (commentID) => {
