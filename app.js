@@ -17,8 +17,12 @@ const {
 const app = express();
 //queries
 
+//Middleware
 app.use(cors())
+app.use(express.json());
 
+
+//Route Handlers
 app.get("/api", getAllEndpoints);
 app.get("/api/topics", getAllTopics);
 app.get("/api/articles/:article_id", getArticleByID);
@@ -27,7 +31,7 @@ app.get("/api/articles/:article_id/comments", getCommentsFromArticle);
 app.get("/api/users", getUsers);
 app.get("/api/articles/:article_id/comment_count", getArticleByID);
 
-app.use(express.json());
+
 
 //alterations
 app.post("/api/articles/:article_id/comments", postComment);
